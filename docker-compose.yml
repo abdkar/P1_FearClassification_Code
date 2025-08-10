@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow_server
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000 \
+        --backend-store-uri sqlite:///mlflow.db \
+        --default-artifact-root /mlflow_artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow_artifacts
+      - ./mlflow.db:/mlflow.db
+
+  app:
+    build: ./docker
+    image: fear-classification:gpu
+    container_name: fear_classification_app
+    depends_on:
+      - mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - TARGET_SUBJECT=HF_203
+      - VERBOSE=1
+      - IG_ENABLE=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: ["python", "experiments/lopocv_real.py"]
+    # GPU access (Compose v2 device_requests syntax)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # Fallback for older docker-compose (may be ignored if unsupported)
+    runtime: nvidia
+
+# Usage:
+# docker compose build
+# docker compose up   # runs MLflow at localhost:5000 and training script

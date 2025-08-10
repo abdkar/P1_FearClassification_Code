@@ -1,0 +1,35 @@
+# CPU-only fallback image (no NVIDIA drivers required)
+FROM python:3.11-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System deps (build essentials for some wheels like scipy)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential git wget curl && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy requirements first for layer caching
+COPY requirements.txt ./
+
+# Install deps (tensorflow CPU wheel will be pulled automatically)
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir jupyter pynvml || true
+
+# Copy project
+COPY . .
+
+# Environment defaults
+ENV PYTHONUNBUFFERED=1 \
+    TF_CPP_MIN_LOG_LEVEL=1 \
+    MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING=true \
+    MPLBACKEND=Agg
+
+EXPOSE 5000 8888
+
+# Healthcheck (CPU)
+HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD python -c "import tensorflow as tf; print(tf.__version__)" || exit 1
+
+CMD ["python", "experiments/lopocv_real.py"]

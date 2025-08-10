@@ -13,7 +13,8 @@ mlruns_backup/
 mlflow_ui.log
 mlflow_ui.pid
 
-# Large experiment artifacts (per-fold)
+# Experiment artifacts (centralized)
+artifacts/
 artifacts_HF_*/
 artifacts_LF_*/
 artifacts_H_*/
@@ -22,8 +23,9 @@ run_artifacts/
 artifacts_local/
 results/
 
-# Data (keep only sample or metadata)
+# Data (ignore full synthetic / real; allow minimal sample docs)
 clean_simulated_data/
+!clean_simulated_data/sample_sim/README.md
 
 # OS / editor
 .DS_Store
@@ -32,4 +34,22 @@ clean_simulated_data/
 
 # Logs
 *.log
+
+# Legacy / archive (optional keep locally only)
+Old_ver/
+Demos/
+
+# Node / front-end (future-proof)
+node_modules/
+
+# Coverage / test
+.coverage
+htmlcov/
+
+# Cache
+*.cache
+.cache/
+
+# Whitelist scripts explicitly (not necessary but illustrative)
+!Scripts/generate_sample_data.py
 

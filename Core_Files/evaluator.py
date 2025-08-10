@@ -18,6 +18,18 @@ from utils import (
     color_row
 )
 
+# Optional Integrated Gradients import
+try:  # pragma: no cover
+    from Core_Files.integrated_gradients import IntegratedGradients
+except Exception:
+    IntegratedGradients = None
+
+# Attempt MLflow tracker import
+try:  # pragma: no cover
+    from mlflow_tracker import mlflow_tracker
+except Exception:
+    mlflow_tracker = None
+
 
 class Evaluator:
     """Model evaluator for Fear Classification."""
@@ -78,6 +90,7 @@ class Evaluator:
         results = {
             'y_pred': y_pred,
             'predictions': predictions,
+            'y_test': y_test,
             'test_accuracies': test_accuracies,
             'confusion_matrices': confusion_matrices,
             'threshold_results': threshold_results,
@@ -174,6 +187,8 @@ class Evaluator:
         }
         
         results_df = pd.DataFrame(result_data)
+        # Store summary internally so we can save it separately later
+        self._last_summary_df = results_df.copy()
         
         # Merge with pivoted DataFrame
         merged_df = pd.concat([pivoted_df, results_df], axis=1)
@@ -216,6 +231,55 @@ class Evaluator:
         new_folder = os.path.join(self.config.datadir2, f'Final_result_{self.config.save_name}')
         csv_file_path_final = os.path.join(new_folder, get_file_name(excel_file_path) + '.csv')
         save_results(merged_df, csv_file_path_final, 'csv')
+        
+        # NEW: save summary metrics (result_data) alone if available
+        try:
+            if hasattr(self, '_last_summary_df'):
+                summary_only_path = os.path.join(new_folder, get_file_name(excel_file_path) + '_summary_only.csv')
+                save_results(self._last_summary_df, summary_only_path, 'csv')
+                if mlflow_tracker and mlflow_tracker.is_active():  # pragma: no cover
+                    mlflow_tracker.log_artifact(summary_only_path)
+        except Exception as e:
+            print(f"⚠️ Failed to save summary-only CSV: {e}")
+        
+        # Log Integrated Gradients artifacts to MLflow if available
+        if mlflow_tracker and mlflow_tracker.is_active():  # pragma: no cover
+            try:
+                ig_tmp_path = os.path.join(new_folder_sum, 'integrated_gradients_sum.csv')
+                if feature_importance is not None:
+                    np.savetxt(ig_tmp_path, feature_importance, fmt='%s', delimiter=',')
+                    mlflow_tracker.log_artifact(ig_tmp_path)
+                    if feature_importance.shape[0] > 1:
+                        ig_array = feature_importance[1:].astype(float)
+                        per_feature = np.sum(np.abs(ig_array), axis=0)
+                        top_idx = np.argsort(per_feature)[::-1][:10]
+                        top_dict = {f'ig_top_feat_{i}': str(int(idx)) for i, idx in enumerate(top_idx)}
+                        mlflow_tracker.log_params(top_dict)
+                        mlflow_tracker.log_metrics({f'ig_importance_sum_feat_{idx}': float(val) for idx, val in zip(top_idx, per_feature[top_idx])})
+            except Exception as e:
+                print(f"⚠️ IG MLflow logging failed: {e}")
+
+    # New helper to compute Integrated Gradients inside evaluator
+    def compute_integrated_gradients(self, model: Any, X_test: np.ndarray, target_class: int = 1):
+        """Compute Integrated Gradients sum using existing IG module.
+        Returns feature_importance array (header + values) or None if IG disabled/unavailable.
+        """
+        if IntegratedGradients is None:
+            return None
+        # Config object needs m_steps and parameters
+        class _Cfg:
+            def __init__(self, m_steps, parameters):
+                self.m_steps = m_steps
+                self.parameters = parameters
+        m_steps = getattr(self.config, 'm_steps', 100)
+        feature_names = getattr(self.config, 'parameters', [f'feat_{i}' for i in range(X_test.shape[-1])])
+        cfg = _Cfg(m_steps, feature_names)
+        ig = IntegratedGradients(model, cfg)
+        try:
+            return ig.compute_feature_importance(X_test, target_class_idx=target_class)
+        except Exception as e:
+            print(f"⚠️ IG computation failed: {e}")
+            return None
     
     def create_plots(self, history: Any, paths: Dict[str, str], file_names: Dict[str, str]) -> None:
         """
