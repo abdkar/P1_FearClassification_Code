@@ -240,8 +240,7 @@ For questions / collaboration: [abdolamir.karbalaie@umu.se](mailto:abdolamir.kar
 [abdolamir.karbalaie@gmail.com](mailto:abdolamir.karbalaie@gmail.com)
 
 
----
-]
+
 
 ---
 ## 14. Clinical & Ethical Note
