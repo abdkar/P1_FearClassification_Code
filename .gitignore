@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.env
+.venv
+
+# MLflow tracking & artifacts
+mlruns/
+mlruns_backup/
+mlflow_ui.log
+mlflow_ui.pid
+
+# Large experiment artifacts (per-fold)
+artifacts_HF_*/
+artifacts_LF_*/
+artifacts_H_*/
+experiments/LOPOCV/artifacts/*
+run_artifacts/
+artifacts_local/
+results/
+
+# Data (keep only sample or metadata)
+clean_simulated_data/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
+
