@@ -236,7 +236,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 ## 13. Contact
-For questions / collaboration: [your_email@example.com]
+For questions / collaboration: [abdolamir.karbalaie@umu.se](mailto:abdolamir.karbalaie@umu.se)
+[abdolamir.karbalaie@gmail.com](mailto:abdolamir.karbalaie@gmail.com)
+
+
+---
+]
 
 ---
 ## 14. Clinical & Ethical Note
