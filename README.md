@@ -223,10 +223,10 @@ Override environment in `docker-compose.yml` or with `docker compose run -e VAR=
 If you use this repository, please cite:
 ```
 @misc{fear_classification_platform,
-  title  = {Fear Classification Platform},
-  author = {Your Team},
+  title  = {Beyond self-reports after anterior cruciate ligament injury – Machine learning methods for classifying and identifying movement patterns related to fear of re-injury},
+  author = {Abdolamir Karbalaie Team},
   year   = {2025},
-  url    = {https://github.com/your_org/fear-classification}
+  url    = {https://github.com/abdkar/P1_FearClassification_Code}
 }
 ```
 
