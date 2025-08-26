@@ -230,7 +230,7 @@ If you use this repository, please cite:
 ```
 @misc{fear_classification_platform,
   title  = {Beyond self-reports after anterior cruciate ligament injury – Machine learning methods for classifying and identifying movement patterns related to fear of re-injury},
-  author = {Abdolamir Karbalaie Team},
+  author = {Abdolamir Karbalaie, Andrew Strong, Tomas Nordström, Lina Schelin, Jonas Selling, Helena Grip, Kalle Prorok, Charlotte K. Häger},
   year   = {2025},
   url    = {https://github.com/abdkar/P1_FearClassification_Code}
 }
