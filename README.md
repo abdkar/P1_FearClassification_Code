@@ -232,6 +232,7 @@ If you use this repository, please cite:
   title  = {Beyond self-reports after anterior cruciate ligament injury – Machine learning methods for classifying and identifying movement patterns related to fear of re-injury},
   author = {Abdolamir Karbalaie, Andrew Strong, Tomas Nordström, Lina Schelin, Jonas Selling, Helena Grip, Kalle Prorok, Charlotte K. Häger},
   year   = {2025},
+  journal= {Journal of Sports Sciences},
   url    = {https://github.com/abdkar/P1_FearClassification_Code}
 }
 ```
@@ -242,8 +243,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 ## 13. Contact
-For questions / collaboration: [abdolamir.karbalaie@umu.se](mailto:abdolamir.karbalaie@umu.se)
-[abdolamir.karbalaie@gmail.com](mailto:abdolamir.karbalaie@gmail.com)
+For questions / collaboration: [abdolamir.karbalaie@gmail.com](mailto:abdolamir.karbalaie@gmail.com)
 
 
 
